@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wuxin.appservice.dao.OperationInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.wuxin.appservice.model.OperationInfo" >
+    <id column="oiid" property="oiid" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="oldvalue" property="oldvalue" jdbcType="VARCHAR" />
+    <result column="newvalue" property="newvalue" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="update_id" property="updateId" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    oiid, uid, oldvalue, newvalue, type, update_id, content, create_by, update_by, create_date, 
+    status
+  </sql>
+  
+  <!-- 查询操作日志所有行 -->
+  <select id="countAll"  resultType="java.lang.Integer" parameterType="com.wuxin.appservice.vo.enums.LogVo">
+  		SELECT count(*)
+ 		FROM t_operation_info o 
+			LEFT JOIN t_user u  
+ 		ON  
+ 			o.uid= u.uid
+ 			LEFT JOIN t_person p
+ 		ON 
+ 			o.update_id = p.pid   
+ 	 WHERE 1=1 
+ 		 <if test="userName != null"  >
+ 			 AND	u.user_name like '%${userName}%'
+ 		</if>
+ 		<if test="policeNo != null"  >
+ 			 AND	p.police_no like '%${policeNo}%'
+ 		</if>
+ 		
+ 		<if test="content != null"  >
+ 			 AND	o.content like '%${content}%'
+ 		</if> 
+ 
+  </select>
+  <!-- 查询操作日志 -->
+  <select id="selsectAllLog" resultType="com.wuxin.appservice.vo.enums.LogVo" parameterType="com.wuxin.appservice.vo.enums.LogVo">
+  	SELECT u.user_name as userName,p.name as name ,p.police_no as policeNo,
+  				o.type as type,o.content as content,o.create_date  as createDate
+ 		FROM t_operation_info o 
+			LEFT JOIN t_user u  
+ 		ON  
+ 			o.uid= u.uid
+ 			LEFT JOIN t_person p
+ 		ON 
+ 			o.update_id = p.pid   
+ 		 WHERE 1=1 
+ 		 <if test="userName != null"  >
+ 			 AND	u.user_name like '%${userName}%'
+ 		</if>
+ 		<if test="policeNo != null"  >
+ 			 AND	p.police_no like '%${policeNo}%'
+ 		</if>
+ 		<if test="content != null"  >
+ 			 AND	o.content like '%${content}%'
+ 		</if> 
+ 			ORDER BY  o.create_date desc
+ 		 limit #{start},#{limit}
+ 	
+  </select>
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_operation_info
+    where oiid = #{oiid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_operation_info
+    where oiid = #{oiid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wuxin.appservice.model.OperationInfo" >
+    insert into t_operation_info (oiid, uid, oldvalue, 
+      newvalue, type, update_id, 
+      content, create_by, update_by, 
+      create_date, status)
+    values (#{oiid,jdbcType=INTEGER}, #{uid,jdbcType=INTEGER}, #{oldvalue,jdbcType=VARCHAR}, 
+      #{newvalue,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{updateId,jdbcType=INTEGER}, 
+      #{content,jdbcType=VARCHAR}, #{createBy,jdbcType=INTEGER}, #{updateBy,jdbcType=INTEGER}, 
+      #{createDate,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wuxin.appservice.model.OperationInfo" >
+    insert into t_operation_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="oiid != null" >
+        oiid,
+      </if>
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="oldvalue != null" >
+        oldvalue,
+      </if>
+      <if test="newvalue != null" >
+        newvalue,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="updateId != null" >
+        update_id,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="oiid != null" >
+        #{oiid,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="oldvalue != null" >
+        #{oldvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="newvalue != null" >
+        #{newvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="updateId != null" >
+        #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wuxin.appservice.model.OperationInfo" >
+    update t_operation_info
+    <set >
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="oldvalue != null" >
+        oldvalue = #{oldvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="newvalue != null" >
+        newvalue = #{newvalue,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="updateId != null" >
+        update_id = #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where oiid = #{oiid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wuxin.appservice.model.OperationInfo" >
+    update t_operation_info
+    set uid = #{uid,jdbcType=INTEGER},
+      oldvalue = #{oldvalue,jdbcType=VARCHAR},
+      newvalue = #{newvalue,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      update_id = #{updateId,jdbcType=INTEGER},
+      content = #{content,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=INTEGER},
+      update_by = #{updateBy,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR}
+    where oiid = #{oiid,jdbcType=INTEGER}
+  </update>
+</mapper>

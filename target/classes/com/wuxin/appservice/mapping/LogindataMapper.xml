@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wuxin.appservice.dao.LogindataMapper" >
+  <resultMap id="BaseResultMap" type="com.wuxin.appservice.model.Logindata" >
+    <id column="ldid" property="ldid" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="eid" property="eid" jdbcType="INTEGER" />
+    <result column="login_ip" property="loginIp" jdbcType="VARCHAR" />
+    <result column="login_plcae" property="loginPlcae" jdbcType="VARCHAR" />
+    <result column="rid" property="rid" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="login_date" property="loginDate" jdbcType="VARCHAR" />
+    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ldid, uid, eid, login_ip, login_plcae, rid, remark,login_date
+  </sql>
+  <!-- 查询登录日志 -->
+  <select  id="count"  resultType="java.lang.Integer" parameterType="com.wuxin.appservice.vo.enums.LoginVo">
+  	SELECT count(*)
+ 		FROM t_logindata l 
+ 			LEFT JOIN t_user u 
+ 		ON 
+ 			l.uid = u.uid 
+ 			LEFT JOIN t_equipment e
+ 		ON 
+ 			l.eid = e.eid
+ 			LEFT JOIN t_role r
+ 		ON 
+ 			l.rid = r.rid
+ 		 WHERE 1=1 
+ 		<if test="userName != null and userName!=''"  >
+ 			 AND	u.user_name like '%${userName}%'
+ 		</if>
+ 		<if test="loginPlcae != null and loginPlcae!=''"  >
+ 			 AND	l.login_plcae like '%${loginPlcae}%'
+ 		</if>  
+ 		<if test="equipmentName != null and equipmentName!=''" >
+ 			 AND	e.equipment_name like '%${equipmentName}%'
+ 		</if> 
+  </select>
+  
+	<!-- 查询登录日志 -->
+  <select id="selsectLog" resultType="com.wuxin.appservice.vo.enums.LoginVo" parameterType="com.wuxin.appservice.vo.enums.LoginVo">
+
+ 	 SELECT u.user_name as userName,e.equipment_name as equipmentName ,
+ 				e.eid as eid,r.role_name as roleName,
+ 				l.login_ip as loginIp,l.login_plcae as loginPlcae,l.login_date as loginDate
+ 		FROM t_logindata l 
+ 			LEFT JOIN t_user u 
+ 		ON 
+ 			l.uid = u.uid 
+ 			LEFT JOIN t_equipment e
+ 		ON 
+ 			l.eid = e.eid
+ 			LEFT JOIN t_role r
+ 		ON 
+ 			l.rid = r.rid
+ 	 	 WHERE 1=1 
+ 		<if test="userName != null and userName!=''"  >
+ 			 AND	u.user_name like '%${userName}%'
+ 		</if>
+ 		<if test="loginPlcae != null and loginPlcae!=''"  >
+ 			 AND	l.login_plcae like '%${loginPlcae}%'
+ 		</if>  
+ 		<if test="equipmentName != null and equipmentName!=''" >
+ 			 AND	e.equipment_name like '%${equipmentName}%'
+ 		</if> 
+
+ 		limit #{start},#{limit}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_logindata
+    where ldid = #{ldid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_logindata
+    where ldid = #{ldid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.wuxin.appservice.model.Logindata" >
+    insert into t_logindata (uid, eid, 
+      login_ip, login_plcae, rid, 
+      remark,login_date)
+    values ( #{uid,jdbcType=INTEGER}, #{eid,jdbcType=INTEGER}, 
+      #{loginIp,jdbcType=VARCHAR}, #{loginPlcae,jdbcType=VARCHAR}, #{rid,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR},#{loginDate,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wuxin.appservice.model.Logindata" >
+    insert into t_logindata
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ldid != null" >
+        ldid,
+      </if>
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="eid != null" >
+        eid,
+      </if>
+      <if test="loginIp != null" >
+        login_ip,
+      </if>
+      <if test="loginPlcae != null" >
+        login_plcae,
+      </if>
+      <if test="rid != null" >
+        rid,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="loginDate != null" >
+        login_date,
+      </if>
+     
+      
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ldid != null" >
+        #{ldid,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="eid != null" >
+        #{eid,jdbcType=INTEGER},
+      </if>
+      <if test="loginIp != null" >
+        #{loginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="loginPlcae != null" >
+        #{loginPlcae,jdbcType=VARCHAR},
+      </if>
+      <if test="rid != null" >
+        #{rid,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="loginDate != null" >
+        #{loginDate,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wuxin.appservice.model.Logindata" >
+    update t_logindata
+    <set >
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="eid != null" >
+        eid = #{eid,jdbcType=INTEGER},
+      </if>
+      <if test="loginIp != null" >
+        login_ip = #{loginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="loginPlcae != null" >
+        login_plcae = #{loginPlcae,jdbcType=VARCHAR},
+      </if>
+      <if test="rid != null" >
+        rid = #{rid,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="loginDate != null" >
+        loginDate = #{loginDate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ldid = #{ldid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wuxin.appservice.model.Logindata" >
+    update t_logindata
+    set uid = #{uid,jdbcType=INTEGER},
+      eid = #{eid,jdbcType=INTEGER},
+      login_ip = #{loginIp,jdbcType=VARCHAR},
+      login_plcae = #{loginPlcae,jdbcType=VARCHAR},
+      rid = #{rid,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      loginDate = #{loginDate,jdbcType=VARCHAR},
+      
+    where ldid = #{ldid,jdbcType=INTEGER}
+  </update>
+</mapper>

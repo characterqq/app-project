@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wuxin.appservice.dao.EquipmentMapper" >
+  <resultMap id="BaseResultMap" type="com.wuxin.appservice.model.Equipment" >
+    <id column="eid" property="eid" jdbcType="INTEGER" />
+    <result column="pid" property="pid" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="update_date" property="updateDate" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="equipment_name" property="equipmentName" jdbcType="VARCHAR" />
+    <result column="equipment_sys" property="equipmentSys" jdbcType="VARCHAR" />
+    <result column="equipment_type" property="equipmentType" jdbcType="VARCHAR" />
+     <result column="equipment_no" property="equipmentNo" jdbcType="VARCHAR" />
+     <result column="number" property="number" jdbcType="VARCHAR" />
+     <result column="uid" property="uid" jdbcType="INTEGER" />
+      <result column="create_by" property="createBy" jdbcType="INTEGER" />
+     <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+     <result column="equipment_status" property="equipmentStatus" jdbcType="INTEGER" />
+     
+  </resultMap>
+  <sql id="Base_Column_List" >
+    eid, pid, status, update_date, create_date, remark, equipment_name, equipment_sys, 
+    equipment_type,equipment_no,number,uid,create_by ,update_by,equipment_status
+  </sql>
+    <!-- 查询绑定设备 -->
+  <select id="binDingEquipment" parameterType="com.wuxin.appservice.vo.enums.EquipmentVo"  resultType="com.wuxin.appservice.vo.enums.EquipmentVo" >
+  	SELECT distinct  p.police_no as policeNo,p.person_pwd as personPwd,p.pid as pid,e.eid as eid,p.status as status
+  		FROM t_equipment e LEFT JOIN
+			t_person p 
+			ON 
+				e.pid=p.pid 
+			WHERE 1=1
+		<if test="eid !=null and eid !=''">
+			and	e.eid=#{eid,jdbcType=INTEGER}
+		</if>
+		<if test="policeNo !=null and policeNo !=''">
+			and	p.police_no = #{policeNo,jdbcType=INTEGER}
+		</if>
+		<if test="personPwd !=null and personPwd !=''">
+			and	 p.person_pwd = #{personPwd,jdbcType=VARCHAR}
+		</if>
+  </select >
+  <!-- 通过设备id修改所绑定的用户 -->
+  <update id="binDing"  parameterType="com.wuxin.appservice.vo.enums.EquipmentVo"  >
+  		 UPDATE  
+  		 	t_equipment 
+  		 		SET 
+  		 	<if test="pid !=null and policeNo !=''">
+  		 		pid=#{pid,jdbcType=INTEGER}	 
+  		 	</if>
+  		 	<if test="equipmentStatus !=null and equipmentStatus !=''">
+  		 		equipment_status=#{equipmentStatus,jdbcType=INTEGER}	 
+  		 	</if>
+  		 		WHERE eid=#{eid,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 通过员工id查询该员工所管理的设备 -->
+  <select id="selectEquipment"   resultMap="BaseResultMap"  parameterType="com.wuxin.appservice.model.Equipment" >
+  	select 
+  		*
+  		from t_equipment where 1=1
+  		<if test="pid != null and pid != ''">
+  			and pid = #{pid,jdbcType=INTEGER}
+  		</if>
+  		 <if test="updateBy !=null and updateBy != ''">
+  			and  update_by = #{updateBy,jdbcType=INTEGER}
+  		</if> 
+  </select> 
+  
+  <!-- 根据警员id检查其名下所有的设备(可用或不可用都被包括) -->
+  <select id="checkValiableEquipment" resultMap="BaseResultMap" parameterType="com.wuxin.appservice.model.Equipment">
+  	SELECT
+		<include refid="Base_Column_List"/>
+	FROM
+		t_equipment e
+	WHERE
+		e.pid = #{pid,jdbcType=INTEGER};
+  </select>
+  <!-- 通过设备id查询该设备 -->
+  <select id="selectByPrimaryKey" resultType="com.wuxin.appservice.vo.enums.EquipmentVo" parameterType="java.lang.Integer" >
+   select e.number as number,e.equipment_no as equipmentNo, e.eid as eid,e.pid as pid,e.create_date as createDate,e.equipment_name AS  equipmentName,e.equipment_sys AS equipmentSys,e.equipment_type as equipmentType,e.`status` AS status ,e.update_date AS updateDate,
+	p.police_no as policeNo,p.`name` AS name,e.uid as uid,u.user_name as userName,u.user_pwd as userPwd,e.create_by as createBy  ,e.update_by as updateBy,e.remark ,
+	equipment_status AS  equipmentStatus
+	from t_equipment e
+	LEFT join t_person p on e.pid=p.pid
+	LEFT JOIN t_user u on  u.uid=e.uid
+    where e.eid = #{eid,jdbcType=INTEGER}
+  </select>
+  
+   <select id="list"  parameterType="com.wuxin.appservice.vo.enums.EquipmentVo" resultType="com.wuxin.appservice.vo.enums.EquipmentVo" >
+    select e.number as number,e.equipment_no as equipmentNo, e.eid as eid,e.pid as pid,e.create_date as createDate,e.equipment_name AS  equipmentName,e.equipment_sys AS equipmentSys,e.equipment_type as equipmentType,e.`status` AS status ,e.update_date AS updateDate,
+	p.police_no as policeNo,p.`name` AS name,e.uid as uid,u.user_name as userName,u.user_pwd as userPwd,e.create_by ,e.update_by,
+	equipment_status AS  equipmentStatus
+	from t_equipment e
+	LEFT join t_person p on e.pid=p.pid
+	LEFT JOIN t_user u on  u.uid=e.uid
+    where 1=1
+     <if test="equipmentNo!=null and equipmentNo!=''">
+   		and e.equipment_no =#{equipmentNo}
+    </if>
+    <if test="equipmentSys!=null and equipmentSys!=''">
+   		and e.equipment_sys =#{equipmentSys}
+    </if>
+     <if test="equipmentName!=null and equipmentName!=''">
+   		and e.equipment_name like '%${equipmentName}%'
+    </if>
+    <if test="starDate!=null and starDate!=''and endDate!=null and endDate!=''">
+   		and e.create_date BETWEEN ${starDate} and ${endDate}
+    </if>
+     <if test="status!=null and status!=''">
+   		and e.status =#{status}
+    </if>
+    <if test="pid!=null and pid!=''">
+   		and e.pid =#{pid}
+    </if>
+    <if test="createBy!=null and createBy!=''">
+   		and e.create_by=#{createBy,jdbcType=INTEGER}
+    </if>
+    limit #{start},#{limit}
+  </select>
+   <select id="count"  parameterType="com.wuxin.appservice.vo.enums.EquipmentVo" resultType="java.lang.Integer" >
+    select count(*)
+	from t_equipment e
+	LEFT join t_person p on e.pid=p.pid
+    where 1=1
+     <if test="equipmentNo!=null and equipmentNo!=''">
+   		and e.equipment_no =#{equipmentNo}
+    </if>
+    <if test="equipmentSys!=null and equipmentSys!=''">
+   		and e.equipment_sys =#{equipmentSys}
+    </if>
+     <if test="equipmentName!=null and equipmentName!=''">
+   		and e.equipment_name like '%${equipmentName}%'
+    </if>
+    <if test="starDate!=null and starDate!=''and endDate!=null and endDate!=''">
+   		and e.create_date BETWEEN ${starDate} and ${endDate}
+    </if>
+     <if test="status!=null and status!=''">
+   		and e.status =#{status}
+    </if>
+    <if test="pid!=null and pid!=''">
+   		and e.pid =#{pid}
+    </if>
+     <if test="createBy!=null and createBy!=''">
+   		and e.create_by=#{createBy,jdbcType=INTEGER}
+    </if>
+    limit #{start},#{limit}
+  </select>
+  
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_equipment
+    where eid = #{eid,jdbcType=INTEGER}
+  </delete>
+   <insert id="insert" parameterType="com.wuxin.appservice.model.Equipment"  useGeneratedKeys="true" keyProperty="eid">
+    insert into t_equipment (eid, pid, status, 
+      update_date, create_date, remark, 
+      equipment_name, equipment_sys, equipment_type, 
+      equipment_no, number, uid, 
+      create_by, update_by, equipment_status
+      )
+    values (#{eid,jdbcType=INTEGER}, #{pid,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
+      #{updateDate,jdbcType=VARCHAR}, #{createDate,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{equipmentName,jdbcType=VARCHAR}, #{equipmentSys,jdbcType=VARCHAR}, #{equipmentType,jdbcType=VARCHAR}, 
+      #{equipmentNo,jdbcType=VARCHAR}, #{number,jdbcType=VARCHAR}, #{uid,jdbcType=INTEGER}, 
+      #{createBy,jdbcType=INTEGER}, #{updateBy,jdbcType=INTEGER}, #{equipmentStatus,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.wuxin.appservice.model.Equipment" useGeneratedKeys="true" keyProperty="eid">
+    insert into t_equipment
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="eid != null" >
+        eid,
+      </if>
+      <if test="pid != null" >
+        pid,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="equipmentName != null" >
+        equipment_name,
+      </if>
+      <if test="equipmentSys != null" >
+        equipment_sys,
+      </if>
+      <if test="equipmentType != null" >
+        equipment_type,
+      </if>
+      <if test="equipmentNo != null" >
+        equipment_no,
+      </if>
+      <if test="number != null" >
+        number,
+      </if>
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="updateBy != null" >
+        update_by,
+      </if>
+      <if test="equipmentStatus != null" >
+        equipment_status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="eid != null" >
+        #{eid,jdbcType=INTEGER},
+      </if>
+      <if test="pid != null" >
+        #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentName != null" >
+        #{equipmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentSys != null" >
+        #{equipmentSys,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentType != null" >
+        #{equipmentType,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentNo != null" >
+        #{equipmentNo,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateBy != null" >
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="equipmentStatus != null" >
+        #{equipmentStatus,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wuxin.appservice.model.Equipment" >
+    update t_equipment
+    <set >
+      <if test="pid != null" >
+        pid = #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentName != null" >
+        equipment_name = #{equipmentName,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentSys != null" >
+        equipment_sys = #{equipmentSys,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentType != null" >
+        equipment_type = #{equipmentType,jdbcType=VARCHAR},
+      </if>
+      <if test="equipmentNo != null" >
+        equipment_no = #{equipmentNo,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        number = #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="equipmentStatus != null" >
+        equipment_status = #{equipmentStatus,jdbcType=INTEGER},
+      </if>
+    </set>
+    where eid = #{eid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wuxin.appservice.model.Equipment" >
+    update t_equipment
+    set pid = #{pid,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      equipment_name = #{equipmentName,jdbcType=VARCHAR},
+      equipment_sys = #{equipmentSys,jdbcType=VARCHAR},
+      equipment_type = #{equipmentType,jdbcType=VARCHAR},
+      equipment_no = #{equipmentNo,jdbcType=VARCHAR},
+      number = #{number,jdbcType=VARCHAR},
+      uid = #{uid,jdbcType=INTEGER},
+      create_by = #{createBy,jdbcType=INTEGER},
+      update_by = #{updateBy,jdbcType=INTEGER},
+      equipment_status = #{equipmentStatus,jdbcType=INTEGER}
+    where eid = #{eid,jdbcType=INTEGER}
+  </update>
+  
+<!--   统计系统设备总数，禁用设备占总设备的比例。 -->
+  <select id="forbiddenDevic"   resultType="com.wuxin.appservice.vo.enums.EquipmentVo"   parameterType="com.wuxin.appservice.model.Equipment" >
+	select  count(*) as count ,equipment_status as equipmentStatus from t_equipment  where 1=1
+	<if test="createDate != null" >
+       and  create_date = #{createDate,jdbcType=VARCHAR}
+      </if>
+		GROUP BY  equipment_status
+
+
+  	
+  </select> 
+	<!--   统计当前时间点和过去时间段内设备在线数量 -->
+	<select id="onLineDevice"   resultType="com.wuxin.appservice.vo.enums.EquipmentVo"   parameterType="com.wuxin.appservice.model.Equipment" >
+		select COUNT(*),DATE_FORMAT( l.login_date,'%Y-%m-%d') from t_logindata l
+		LEFT JOIN t_equipment e on l.eid =e.eid
+		where l.eid is not  null 
+		 <if test="starDate!=null and starDate!=''and   endDate!=null and endDate!=''">
+		 and DATE_FORMAT(l.login_date,'%Y-%m-%d') 
+		BETWEEN   
+		DATE_FORMAT( ${starDate},'%Y-%m-%d')
+		 and  
+		DATE_FORMAT(${endDate},'%Y-%m-%d')
+		 </if>
+		GROUP BY DATE_FORMAT( l.login_date,'%Y-%m-%d')
+		
+	</select>
+	
+		<!--   统计当前时间点和过去时间段内设备在线数量 -->
+	<select id="onLineDeviceTime"   resultType="com.wuxin.appservice.vo.enums.EquipmentVo"   parameterType="com.wuxin.appservice.model.Equipment" >
+		
+		select hour(l.login_date) as hour,count(1) as count from t_logindata l
+		LEFT JOIN t_equipment e on l.eid =e.eid
+		where l.eid is not  null 
+		 <if test="starDate!=null and starDate!=''and   endDate!=null and endDate!=''">
+		 and DATE_FORMAT(l.login_date,'%Y-%m-%d') 
+		BETWEEN   
+		DATE_FORMAT( ${starDate},'%Y-%m-%d')
+		 and  
+		DATE_FORMAT(${endDate},'%Y-%m-%d')
+		 </if>
+		GROUP BY hour(l.login_date)
+		
+	</select>
+	
+	<!--   统计系统设备总数，禁用设备占总设备的比例。 -->
+  <select id="sumCount"   resultType="java.lang.Integer"   parameterType="com.wuxin.appservice.vo.enums.EquipmentVo" >
+	select count(1) as count from t_logindata l
+		LEFT JOIN t_equipment e on l.eid =e.eid
+		where l.eid is not  null and DATE_FORMAT(l.login_date,'%Y-%m-%d')= ${starDate}
+  </select> 
+  	<!--   统计系统设备总数，禁用设备占总设备的比例。 -->
+  <select id="sum"   resultType="java.lang.Integer"   parameterType="com.wuxin.appservice.vo.enums.EquipmentVo" >
+	select count(1) as count from  t_equipment
+  </select> 
+</mapper>

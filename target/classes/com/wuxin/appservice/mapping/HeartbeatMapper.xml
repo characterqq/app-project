@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wuxin.appservice.dao.HeartbeatMapper" >
+  <resultMap id="BaseResultMap" type="com.wuxin.appservice.model.Heartbeat" >
+    <id column="hid" property="hid" jdbcType="INTEGER" />
+    <result column="pid" property="pid" jdbcType="INTEGER" />
+    <result column="eid" property="eid" jdbcType="INTEGER" />
+    <result column="police_no" property="policeNo" jdbcType="INTEGER" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="jwd" property="jwd" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="nowtime" property="nowtime" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+     <result column="create_by" property="createBy" jdbcType="INTEGER" />
+     <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    hid, pid, eid, police_no, ip, jwd, address, nowtime, remark,create_by ,update_by
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_heartbeat
+    where hid = #{hid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_heartbeat
+    where hid = #{hid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertSelective" parameterType="com.wuxin.appservice.model.Heartbeat" >
+    insert into t_heartbeat (pid, eid, 
+      police_no, ip, jwd, 
+      address, nowtime, remark,create_by ,update_by
+      )
+    values (#{pid,jdbcType=INTEGER}, #{eid,jdbcType=INTEGER}, 
+      #{policeNo,jdbcType=INTEGER}, #{ip,jdbcType=VARCHAR}, #{jwd,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{nowtime,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},#{createBy,jdbcType=INTEGER},#{updateBy,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insert" parameterType="com.wuxin.appservice.model.Heartbeat" >
+    insert into t_heartbeat
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="hid != null" >
+        hid,
+      </if>
+      <if test="pid != null" >
+        pid,
+      </if>
+      <if test="eid != null" >
+        eid,
+      </if>
+      <if test="policeNo != null" >
+        police_no,
+      </if>
+      <if test="ip != null" >
+        ip,
+      </if>
+      <if test="jwd != null" >
+        jwd,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="nowtime != null" >
+        nowtime,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+        <if test="createBy !=NULL">
+      create_by,
+      </if>
+      <if test="updateBy !=NULL">
+      update_by
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="hid != null" >
+        #{hid,jdbcType=INTEGER},
+      </if>
+      <if test="pid != null" >
+        #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="eid != null" >
+        #{eid,jdbcType=INTEGER},
+      </if>
+      <if test="policeNo != null" >
+        #{policeNo,jdbcType=INTEGER},
+      </if>
+      <if test="ip != null" >
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="jwd != null" >
+        #{jwd,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="nowtime != null" >
+        #{nowtime,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+       <if test="createBy !=NULL">
+      #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateBy !=NULL">
+       #{updateBy,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wuxin.appservice.model.Heartbeat" >
+    update t_heartbeat
+    <set >
+      <if test="pid != null" >
+        pid = #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="eid != null" >
+        eid = #{eid,jdbcType=INTEGER},
+      </if>
+      <if test="policeNo != null" >
+        police_no = #{policeNo,jdbcType=INTEGER},
+      </if>
+      <if test="ip != null" >
+        ip = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="jwd != null" >
+        jwd = #{jwd,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="nowtime != null" >
+        nowtime = #{nowtime,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+       <if test="createBy !=NULL">
+     	create_by = #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateBy !=NULL">
+       	update_by =#{updateBy,jdbcType=INTEGER}
+      </if>
+    </set>
+    where hid = #{hid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wuxin.appservice.model.Heartbeat" >
+    update t_heartbeat
+    set pid = #{pid,jdbcType=INTEGER},
+      eid = #{eid,jdbcType=INTEGER},
+      police_no = #{policeNo,jdbcType=INTEGER},
+      ip = #{ip,jdbcType=VARCHAR},
+      jwd = #{jwd,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      nowtime = #{nowtime,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=INTEGER},
+      update_by =#{updateBy,jdbcType=INTEGER}
+    where hid = #{hid,jdbcType=INTEGER}
+  </update>
+</mapper>

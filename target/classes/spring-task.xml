@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+                        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd  
+                        http://www.springframework.org/schema/context  
+                        http://www.springframework.org/schema/context/spring-context-3.1.xsd  
+                        http://www.springframework.org/schema/mvc  
+                        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+                        http://www.springframework.org/schema/tx 
+                        http://www.springframework.org/schema/tx/spring-tx.xsd  
+                        http://www.springframework.org/schema/task    
+        				http://www.springframework.org/schema/task/spring-task-4.0.xsd">
+
+	<!-- <bean id="myTask" class="com.wuxin.appservice.timer.Timer" />
+
+	生成时时彩结果 时时彩开奖时间 白天10点-24点，10分钟一期 晚上0点-2点，5分钟一期
+	<task:scheduled-tasks>
+		白天10点-晚上23点,23点0分-23点59分,晚上0点-晚上2点,每2分钟执行一次
+		<task:scheduled ref="myTask" method="findSSCResult" cron="0 0/2 10-23,23,0-2 * * ?" />
+	</task:scheduled-tasks> -->
+
+	
+</beans>
